@@ -1,6 +1,6 @@
 TARGET = map_gen
 BUILD_DIR = build
-HEADERFILES = point.hpp polygon.hpp shapefile.hpp
+HEADERFILES = point.hpp polygon.hpp shapefile.hpp image.hpp
 
 CXX = g++
 CXXFLAGS = -g -Wall -std=c++11 -O3

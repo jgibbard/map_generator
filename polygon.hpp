@@ -9,6 +9,32 @@ struct Polygon {
     std::vector<std::vector<Point>> inner;
     std::pair<Point, Point> bounding_box;
 
+    void shift(double x_shift, double y_shift) {
+        bounding_box.first.shift(x_shift,y_shift);
+        bounding_box.second.shift(x_shift,y_shift);
+        for (auto& point : outer) {
+            point.shift(x_shift,y_shift);
+        }
+        for (auto& inner_poly : inner) {
+            for (auto& point : inner_poly) {
+                point.shift(x_shift,y_shift);
+            }
+        }
+    }
+
+    void scale(double x_scale, double y_scale) {
+        bounding_box.first.scale(x_scale,y_scale);
+        bounding_box.second.scale(x_scale,y_scale);
+        for (auto& point : outer) {
+            point.scale(x_scale,y_scale);
+        }
+        for (auto& inner_poly : inner) {
+            for (auto& point : inner_poly) {
+                point.scale(x_scale,y_scale);
+            }
+        }
+    }
+
     bool contains(const Point& p) {
         // If point is within inner boundary, then it is 
         // not within the polygon
@@ -52,7 +78,7 @@ struct Polygon {
         
         // https://en.wikipedia.org/wiki/Curve_orientation
 
-        // Find the point with lowest lat (if lat is the same, find with lowest lng)
+        // Find the point with lowest y (if y is the same, find with lowest x)
         auto b = std::min_element(start,stop);
         // Get point before and after the lowest point
         // Need to handle wrapping at edges of vector
@@ -61,7 +87,7 @@ struct Polygon {
         // First and last points are always equal so wrap to second from first point
         auto c = (b == (stop - 1)) ? (start + 1) : b + 1;
 
-        double det = ((b->lng - a->lng) * (c->lat - a->lat)) - ((c->lng - a->lng) * (b->lat - a->lat));
+        double det = ((b->x - a->x) * (c->y - a->y)) - ((c->x - a->x) * (b->y - a->y));
 
         return det < 0;
     }
@@ -75,10 +101,10 @@ struct Polygon {
 
         auto it = start;
         while (it != stop) {
-            if (it->lat < min.lat) min.lat = it->lat;
-            if (it->lng < min.lng) min.lng = it->lng;
-            if (it->lat > max.lat) max.lat = it->lat;
-            if (it->lng > max.lng) max.lng = it->lng;
+            if (it->y < min.y) min.y = it->y;
+            if (it->x < min.x) min.x = it->x;
+            if (it->y > max.y) max.y = it->y;
+            if (it->x > max.x) max.x = it->x;
             it++;
         }
         return {min,max};
@@ -94,29 +120,29 @@ private:
         double kMin = std::numeric_limits<double>().min();
         double kMax = std::numeric_limits<double>().max();
 
-        // Algorithm works when a longitude is less than or equal to b longitude
+        // Algorithm works when a x is less than or equal to b x
         // So flip vertices around
-        if (a.lng > b.lng) {
+        if (a.x > b.x) {
             return _intersects(b, a, p);
         }
-        // Algorithm only works when p longitude is not the same as a or b.
-        // So add a very small value to p longitude.
-        if (p.lng == a.lng || p.lng == b.lng) {
-            return _intersects(a, b, Point({p.lat, p.lng + kEpsilon}));
+        // Algorithm only works when p x is not the same as a or b.
+        // So add a very small value to p x.
+        if (p.x == a.x || p.x == b.x) {
+            return _intersects(a, b, Point({p.y, p.x + kEpsilon}));
         }
         // Simple cases were intersection not possible 
-        if (p.lng > b.lng || p.lng < a.lng || p.lat > std::max(a.lat, b.lat)) {
+        if (p.x > b.x || p.x < a.x || p.y > std::max(a.y, b.y)) {
             return false;
         }
         // Simple case where intersection will always occur
-        if (p.lat < std::min(a.lat, b.lat)) {
+        if (p.y < std::min(a.y, b.y)) {
             return true;
         }
-        // If A is at same latitude as P, then intersect
-        // If A is as same latitude as B, then only intersect P is also as same latitude
+        // If A is at same y as P, then intersect
+        // If A is as same y as B, then only intersect P is also as same y
         // Otherwise, if angle between A+P is greater than between A+B then an intersection will occur
-        double angle_ap = std::abs(a.lat - p.lat) > kMin ? (p.lng - a.lng) / (p.lat - a.lat) : kMax;
-        double angle_ab = std::abs(a.lat - b.lat) > kMin ? (b.lng - a.lng) / (b.lat - a.lat) : kMax;
+        double angle_ap = std::abs(a.y - p.y) > kMin ? (p.x - a.x) / (p.y - a.y) : kMax;
+        double angle_ab = std::abs(a.y - b.y) > kMin ? (b.x - a.x) / (b.y - a.y) : kMax;
         return angle_ap >= angle_ab;
     }
 };
