@@ -147,7 +147,16 @@ public:
     uint32_t get_height() {return m_height;}
     uint32_t get_width() {return m_width;}
 
-    void save_bitmap_image(const std::string& filename) {
+    void save_bitmap_image_to_file(const std::string& filename) {
+        std::ofstream bmp_file(filename, std::ios::binary);
+        if (!bmp_file.good()) {
+            throw std::runtime_error("Failed to open file: \"" + filename + "\"");
+        }
+        write_bitmap_image(bmp_file);
+        bmp_file.close();
+    }
+
+    void write_bitmap_image(std::ostream& bmp_file) {
         // Initialise default headers
         std::array<uint8_t, 14> bmp_header = { \
             0x42, 0x4D,                 // File ID: "BM"
@@ -215,16 +224,15 @@ public:
             throw std::runtime_error("Not currently supported!");
         }
 
-        std::ofstream bmp_file(filename, std::ios::binary);
         if (!bmp_file.good()) {
-            throw std::runtime_error("Failed to open file: \"" + filename + "\"");
+            throw std::runtime_error("Error with output file stream");
         }
 
         bmp_file.write(reinterpret_cast<char*>(bmp_header.data()), bmp_header.size());
         bmp_file.write(reinterpret_cast<char*>(dib_header.data()), dib_header.size());
         bmp_file.write(reinterpret_cast<char*>(m_colour_table.data()), m_colour_table.size()*(sizeof(uint32_t)));
         bmp_file.write(reinterpret_cast<char*>(padded_image_data.data()), padded_image_data.size());
-        bmp_file.close();
+        
     }
 
 private:

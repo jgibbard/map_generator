@@ -11,22 +11,22 @@ $(BUILD_DIR)/$(TARGET): $(TARGET).cpp $(HEADERFILES)
 	@mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $< -o $(BUILD_DIR)/$(TARGET)
 
-maps : maps/ne_50m_admin_0_countries.shp maps/ne_10m_admin_0_countries.shp
+maps : maps/ne_50m_admin_0_countries_lakes.shp maps/ne_10m_admin_0_countries_lakes.shp
 
-maps/ne_50m_admin_0_countries.shp :
+maps/ne_50m_admin_0_countries_lakes.shp :
 	@echo "Downloading 50m resolutions maps"
 	@mkdir -p maps/temp
-	@wget -q https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/50m/cultural/ne_50m_admin_0_countries.zip -P maps/temp
-	@unzip -qq maps/temp/ne_50m_admin_0_countries.zip -d maps/temp
-	@mv maps/temp/ne_50m_admin_0_countries.shp maps/
+	@wget -q https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/50m/cultural/ne_50m_admin_0_countries_lakes.zip -P maps/temp
+	@unzip -qq maps/temp/ne_50m_admin_0_countries_lakes.zip -d maps/temp
+	@mv maps/temp/ne_50m_admin_0_countries_lakes.shp maps/
 	@rm -rf maps/temp
 
-maps/ne_10m_admin_0_countries.shp :
+maps/ne_10m_admin_0_countries_lakes.shp :
 	@echo "Downloading 10m resolutions maps"
 	@mkdir -p maps/temp
-	@wget -q https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_countries.zip -P maps/temp
-	@unzip -qq maps/temp/ne_10m_admin_0_countries.zip -d maps/temp
-	@mv maps/temp/ne_10m_admin_0_countries.shp maps/
+	@wget -q https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_countries_lakes.zip -P maps/temp
+	@unzip -qq maps/temp/ne_10m_admin_0_countries_lakes.zip -d maps/temp
+	@mv maps/temp/ne_10m_admin_0_countries_lakes.shp maps/
 	@rm -rf maps/temp
 
 clean:

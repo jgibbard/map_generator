@@ -39,21 +39,24 @@ int main(int argc, char **argv) {
 
     // Create image, and set up colour table
     Image<uint8_t, 8> image(width, height);
-    image.set_colour(0, 0x30,0x99,0xBF);    // Blue
-    image.set_colour(1, 0x61,0xD4,0x95);    // Green
-    image.set_colour(2, 0x00,0x00,0x00);    // Black
-    image.set_colour(3, 0xFF,0xFF,0xFF);    // White
+    image.set_colour(0, 0x8A,0xB4,0xF8);    // Blue
+    image.set_colour(1, 0x94,0xD2,0xA5);    // Green
+    image.set_colour(2, 0x6A,0x72,0x75);    // Grey
+    image.set_colour(3, 0x00,0x00,0x00);    // Black
+    image.set_colour(4, 0xFF,0xFF,0xFF);    // White
 
     // Set background to blue
     image.set_background(0);
 
     // Draw all the country boundaries
     for (auto& polygon : polygons) {
-        image.draw_polygon(polygon, true, 1, true, 2);
+        image.draw_polygon(polygon, true, 1, true, 3);
     }
 
-    // Store image as bitmap file
-    image.save_bitmap_image("map.bmp");
+    // Output bitmap to stdout
+    // Allows piping to a tool like imagemagick for resizing
+    // or converting to other file formats
+    image.write_bitmap_image(std::cout);
    
     return 0;
 }
