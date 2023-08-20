@@ -9,6 +9,11 @@ struct Polygon {
     std::vector<std::vector<Point>> inner;
     std::pair<Point, Point> bounding_box;
 
+    inline double max_x() const {return bounding_box.second.x;}
+    inline double max_y() const {return bounding_box.second.y;}
+    inline double min_x() const {return bounding_box.first.x;}
+    inline double min_y() const {return bounding_box.first.y;}
+
     void shift(double x_shift, double y_shift) {
         bounding_box.first.shift(x_shift,y_shift);
         bounding_box.second.shift(x_shift,y_shift);
@@ -35,7 +40,7 @@ struct Polygon {
         }
     }
 
-    bool contains(const Point& p) {
+    bool contains(const Point& p) const {
         // If point is within inner boundary, then it is 
         // not within the polygon
         for (auto& inner_boundary : inner) {
@@ -97,7 +102,7 @@ struct Polygon {
 
         // Make min the maximum possible value, and max the min possible value
         Point min({std::numeric_limits<double>().max(), std::numeric_limits<double>().max()});
-        Point max({std::numeric_limits<double>().min(), std::numeric_limits<double>().min()});
+        Point max({std::numeric_limits<double>().lowest(), std::numeric_limits<double>().lowest()});
 
         auto it = start;
         while (it != stop) {

@@ -31,7 +31,6 @@ private:
 
     // Polygon constants
     const unsigned int kPolygonShapeType = 5;
-    const unsigned int kPolygonBoundingBoxOffset = 4;
     const unsigned int kPolygonNumPartsOffset = 36;
     const unsigned int kPolygonNumPointsOffset = 40;
     const unsigned int kPolygonPartsOffset = 44;
@@ -110,9 +109,6 @@ private:
         if (raw_data.size() < (index + kPolygonPartsOffset)) {
             throw std::runtime_error("Polygon is corrupted");
         }
-
-        // Store the bounding box of the polygon in a vector of 4 doubles
-        //std::memcpy(bounding_box.data(), &shapefile_data[index + kPolygonBoundingBoxOffset], sizeof(double) * 4);
 
         // Get the number of parts in the polygon as well as the total number of points
         // which are split across all the parts
@@ -240,7 +236,7 @@ public:
         for (auto& record : record_index) {
             if (_is_polygon(record)) {
                 // This should be a relatively efficient way of building the vector
-                // of polygons. With C++11 function return are handles with std::move,
+                // of polygons. With C++11 function returns are handles with std::move,
                 // and then using make_move_iterator to append to original vector
                 std::vector<Polygon> polygons_temp = _get_polygons_from_record(record);
                 polygons.insert(polygons.end(),
